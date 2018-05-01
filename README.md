@@ -31,46 +31,6 @@ namespace Recommender
 {
     public class Program
     {
-        public static void Main(String[] args)
-        {
-            //Test_CollaborativeFilteringRSCostFunction_Evaluate();
-            //Test_CollaborativeFilteringRSCostFunction_CalcGradient();
-            Test_Compute();
-        }
-
-        protected static Matrix<double> Convert2Matrix(List<List<double>> X)
-        {
-            int row_count, col_count;
-            DblDataTableUtil.GetSize(X, out row_count, out col_count);
-            Matrix<double> X_matrix = new DenseMatrix(row_count, col_count, 0);
-
-            for (int i = 0; i < row_count; ++i)
-            {
-                List<double> row = X[i];
-                for (int j = 0; j < col_count; ++j)
-                {
-                    X_matrix[i, j] = row[j];
-                }
-            }
-
-            return X_matrix;
-        }
-
-        protected static Random mRand = new Random();
-
-        protected static Matrix<double> CreateRandomMatrix(int row_count, int col_count)
-        {
-            Matrix<double> X_t = new SparseMatrix(row_count, col_count);
-            for (int i = 0; i < row_count; i++)
-            {
-                for (int j = 0; j < col_count; ++j)
-                {
-                    X_t[i, j] = mRand.NextDouble();
-                }
-            }
-
-            return X_t;
-        }
 
         protected static List<string> LoadMovies()
         {
@@ -102,7 +62,7 @@ namespace Recommender
             return movie_titles;
         }
 
-        public static void Test_Compute()
+        public static void Main(string[] args)
         {
             List<string> movie_titles = LoadMovies();
             int num_movies = movie_titles.Count;
@@ -195,94 +155,6 @@ namespace Recommender
             }
         }
 
-        public static void Test_CollaborativeFilteringRSCostFunction_CalcGradient(double lambda = 0)
-        {
-
-            Matrix<double> X_t = CreateRandomMatrix(4, 3);
-            Matrix<double> Theta_t = CreateRandomMatrix(5, 3);
-
-            Matrix<double> Y = X_t.Multiply(Theta_t.Transpose());
-            int[,] R = new int[Y.RowCount, Y.ColumnCount];
-
-            for (int i = 0; i < Y.RowCount; ++i)
-            {
-                for (int j = 0; j < Y.ColumnCount; ++j)
-                {
-                    if (mRand.NextDouble() > 0.5)
-                    {
-                        Y[i, j] = 0;
-                    }
-                    if (Y[i, j] == 0)
-                    {
-                        R[i, j] = 0;
-                    }
-                    else
-                    {
-                        R[i, j] = 1;
-                    }
-                }
-            }
-
-
-            Matrix<double> X = CreateRandomMatrix(4, 3);
-            Matrix<double> Theta = CreateRandomMatrix(5, 3);
-            int num_users = Y.ColumnCount;
-            int num_movies = Y.RowCount;
-            int num_features = Theta_t.ColumnCount;
-
-            int dimension = num_movies * num_features + num_users * num_features; //total number of entries in X and Theta
-
-            double[] theta_x = new double[dimension];
-            CollaborativeFilteringRSCostFunction.UnrollMatrixIntoVector(Theta, X, theta_x);
-
-            CollaborativeFilteringRSCostFunction f = new CollaborativeFilteringRSCostFunction(Y, R, num_movies, num_features, dimension);
-            f.RegularizationLambda = lambda;
-
-            double[] numgrad = new double[dimension];
-            double[] grad = new double[dimension];
-            GradientEstimation.CalcGradient(theta_x, numgrad, (x_pi, constraints) =>
-            {
-                return f.Evaluate(x_pi);
-            });
-            f.CalcGradient(theta_x, grad);
-
-            Console.WriteLine("The relative difference will be small:");
-            for (int i = 0; i < dimension; ++i)
-            {
-                Console.WriteLine("{0}\t{1}", numgrad[i], grad[i]);
-            }
-        }
-
-        public static void Test_CollaborativeFilteringRSCostFunction_Evaluate(double lambda)
-        {
-            int num_users = 4; int num_movies = 5; int num_features = 3;
-
-            List<List<double>> X = DblDataTableUtil.LoadDataSet("X.txt");
-            List<List<double>> Y = DblDataTableUtil.LoadDataSet("Y.txt");
-            List<List<int>> R = IntDataTableUtil.LoadDataSet("R.txt");
-            List<List<double>> Theta = DblDataTableUtil.LoadDataSet("Theta.txt");
-
-            X = DblDataTableUtil.SubMatrix(X, num_movies, num_features);
-            Y = DblDataTableUtil.SubMatrix(Y, num_movies, num_users);
-            R = IntDataTableUtil.SubMatrix(R, num_movies, num_users);
-            Theta = DblDataTableUtil.SubMatrix(Theta, num_users, num_features);
-
-            Matrix<double> Y_matrix = Convert2Matrix(Y);
-            Matrix<double> X_matrix = Convert2Matrix(X);
-            Matrix<double> Theta_matrix = Convert2Matrix(Theta);
-            int[,] R_matrix = IntDataTableUtil.Convert2DArray(R);
-
-            int dimension = num_movies * num_features + num_users * num_features; //total number of entries in X and Theta
-
-            double[] theta_x = new double[dimension];
-            CollaborativeFilteringRSCostFunction.UnrollMatrixIntoVector(Theta_matrix, X_matrix, theta_x);
-
-            CollaborativeFilteringRSCostFunction f = new CollaborativeFilteringRSCostFunction(Y_matrix, R_matrix, num_movies, num_features, dimension);
-            f.RegularizationLambda = lambda;
-            double J = f.Evaluate(theta_x);
-
-            Console.WriteLine("Cost at loaded parameters: {0} (this value should be about 22.22)", J);
-        }
 
     }
 }
