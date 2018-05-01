@@ -60,6 +60,8 @@
     <Compile Include="ContentBasedRSCostFunction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RatedItem.cs" />
+    <Compile Include="Utils\DblDataTableUtil.cs" />
+    <Compile Include="Utils\IntDataTableUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Readme\MathNet.Numerics.authors.txt" />
