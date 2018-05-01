@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>cs-recommender</id>
+    <version>1.0.1</version>
+    <authors>cschen1205</authors>
+    <owners>cschen1205</owners>
+    <licenseUrl>https://github.com/cschen1205/cs-recommender/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/cschen1205/cs-recommender</projectUrl>
+    <iconUrl>https://rawgit.com/cschen1205/cs-recommender/master/icon.jpg</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Collaborative Filtering Recommender</description>
+    <releaseNotes>Collaborative Filtering Recommender in .NET 4.6.1</releaseNotes>
+    <copyright>Copyright 2018</copyright>
+    <tags>Collaborative Filtering, Recommender, Hidden Factor Analysis, Gradient Descent, c-sharp</tags>
+    <dependencies>
+      
+    </dependencies>
+  </metadata>
+</package>
